@@ -1,0 +1,18 @@
+// Override default variables before the import
+// $body-bg: #000;
+
+.main-container {
+  border: 1px solid #cccccc;
+  margin: 20px auto auto;
+  padding: 40px 20px;
+}
+
+.main-title {
+}
+
+.destination-field {
+  margin: 0 0 20px;
+}
+
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";
