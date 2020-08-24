@@ -1,12 +1,14 @@
 import React from 'react';
 import { Alert, Button, Container, Row, Col, FormGroup, Input, Label } from 'reactstrap';
+import axios from 'axios';
 
 class Main extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			destinations: ['', ''],
-			error: null
+			error: null,
+			success: null
 		};
 	}
 
@@ -33,7 +35,32 @@ class Main extends React.Component {
 		} else {
 			console.log('Looks good... submitting!');
 		}
-		//this.setState({ error: 'Oh no!!!' });
+
+		const API_PATH = '/api/create.php';
+		axios({
+			method: 'post',
+			url: `${API_PATH}`,
+			headers: { 'content-type': 'application/json' },
+			data: { destinations: this.state.destinations }
+		})
+			.then((result) => {
+				console.log(result.data);
+				this.setState({
+					success:
+						"You're all set. Your shortlink is: " +
+						result.data.Success +
+						" (We've copied it to the clipboard for you.)",
+					destinations: ['', '']
+				});
+
+				const copyText = document.createElement('textarea');
+				document.body.appendChild(copyText);
+				copyText.value = result.data.Success;
+				copyText.select();
+				document.execCommand('copy');
+				document.body.removeChild(copyText);
+			})
+			.catch((error) => this.setState({ error: error.message }));
 	};
 
 	render() {
@@ -62,6 +89,10 @@ class Main extends React.Component {
 
 		const formErrorAlert = () => {
 			return this.state.error ? <Alert color="danger">{this.state.error}</Alert> : null;
+		};
+
+		const shortLinkCreated = () => {
+			return this.state.success ? <Alert color="success">{this.state.success}</Alert> : null;
 		};
 
 		return (
@@ -110,6 +141,9 @@ class Main extends React.Component {
 							Create Short Link
 						</Button>
 					</Col>
+				</Row>
+				<Row>
+					<Col>{shortLinkCreated()}</Col>
 				</Row>
 			</Container>
 		);
