@@ -27,40 +27,39 @@ class Main extends React.Component {
 	};
 
 	saveDestinations = () => {
-		console.log(this.state.destinations);
 		if (this.state.destinations.includes('')) {
 			this.setState({ error: 'It looks like you left one or more destinations blank.' });
 		} else if (this.state.destinations.find((a) => a.includes('yoursite.com'))) {
 			this.setState({ error: "You left the placeholder in. How'd you manage that?" });
 		} else {
-			console.log('Looks good... submitting!');
-		}
+			this.setState({ error: null });
+			const API_PATH = '/api/create.php';
 
-		const API_PATH = '/api/create.php';
-		axios({
-			method: 'post',
-			url: `${API_PATH}`,
-			headers: { 'content-type': 'application/json' },
-			data: { destinations: this.state.destinations }
-		})
-			.then((result) => {
-				console.log(result.data);
-				this.setState({
-					success:
-						"You're all set. Your shortlink is: " +
-						result.data.Success +
-						" (We've copied it to the clipboard for you.)",
-					destinations: ['', '']
-				});
-
-				const copyText = document.createElement('textarea');
-				document.body.appendChild(copyText);
-				copyText.value = result.data.Success;
-				copyText.select();
-				document.execCommand('copy');
-				document.body.removeChild(copyText);
+			axios({
+				method: 'post',
+				url: `${API_PATH}`,
+				headers: { 'content-type': 'application/json' },
+				data: { destinations: this.state.destinations }
 			})
-			.catch((error) => this.setState({ error: error.message }));
+				.then((result) => {
+					console.log(result.data);
+					this.setState({
+						success:
+							"You're all set. Your shortlink is: " +
+							result.data.Success +
+							" (We've copied it to the clipboard for you.)",
+						destinations: ['', '']
+					});
+
+					const copyText = document.createElement('textarea');
+					document.body.appendChild(copyText);
+					copyText.value = result.data.Success;
+					copyText.select();
+					document.execCommand('copy');
+					document.body.removeChild(copyText);
+				})
+				.catch((error) => this.setState({ error: error.message }));
+		}
 	};
 
 	render() {

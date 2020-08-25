@@ -1,68 +1,57 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# ABCL.ink
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+This is a simple service to create a/b testing links, and provide the link as a shortlink. I've
+combined a PHP API and React front end into one repo, which has it benefits, but also makes local
+development a little more cumbersome. I'm working on making the local development easier, but it
+works enough to get started.
 
-### `yarn start`
+## Local Setup
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+For local development, I'm using MAMP to run a local Apache for serving the PHP files, and the React
+front end. I started with create-react-app, which includes the `npm run start` for development, but
+that doesn't allow PHP execution.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+1. Clone the repo.
 
-### `yarn test`
+2. Run `npm install` in the base folder.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Run `php composer.phar` in the `/php-api/` folder.
 
-### `yarn build`
+4. Create a MySQL db and provide the credentials in a `.env.local` file within `/php-api/`.
+   (instructions to come...)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. Run a server that serves PHP files locally (MAMP, Apache, or Nginx) and make the `/build` folder
+   the home document folder.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+6. Run `npm run build` to create the `/build` folder, then run `./copyapi.sh` to put the api in
+   place.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Use
 
-### `yarn eject`
+The user can enter URLs that they want to test against. The page default allows 2 URLs, and clicking
+the "Add More Destinations" button creates more fields for URLs. Once the URLs are there, clicking
+"Create Short Link" stores the destinations and creates a corresponding shortlink, and presents that
+to the user for use.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+When a visitor hits one of the shortened links, the db is checked for that link. If it exists, the
+page is forwarded to a random one of the options.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+It's currently hosted at [https://abcl.ink](https://abcl.ink) if you'd like to demo what's there so
+far.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## To-Do
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+-   Streamline local development.
+-   Add better field sanitization and error checking.
+-   Add React Router for...
+-   Add user registration and login.
+-   Add tracking and stats reports.
+-   Add more control over how destinations are chosen. ( percentage based, based on action
+    completions )
 
-## Learn More
+### Thanks
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This was a 2 day personal sprint to brush up on React and PHP since I've been doing a lot of Java at
+work lately and needed to do something different for a bit. Any feedback is welcome. _Thanks_

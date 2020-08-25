@@ -16,6 +16,7 @@ class Wrapper extends React.Component {
 
 	tryRedirect = () => {
 		const API_PATH = '/api/follow.php';
+
 		axios({
 			method: 'post',
 			url: `${API_PATH}`,
