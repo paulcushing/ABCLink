@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# vscode settings
+/.vscode
+
+# API parts
+/api/node_modules

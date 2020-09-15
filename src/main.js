@@ -1,6 +1,5 @@
 import React from 'react';
 import { Alert, Button, Container, Row, Col, FormGroup, Input, Label } from 'reactstrap';
-import axios from 'axios';
 
 class Main extends React.Component {
 	constructor(props) {
@@ -8,7 +7,8 @@ class Main extends React.Component {
 		this.state = {
 			destinations: ['', ''],
 			error: null,
-			success: null
+			success: null,
+			apiResponse: null
 		};
 	}
 
@@ -33,32 +33,42 @@ class Main extends React.Component {
 			this.setState({ error: "You left the placeholder in. How'd you manage that?" });
 		} else {
 			this.setState({ error: null });
-			const API_PATH = '/api/create.php';
+			const createEndpoint = 'http://localhost:9000/create';
 
-			axios({
-				method: 'post',
-				url: `${API_PATH}`,
-				headers: { 'content-type': 'application/json' },
-				data: { destinations: this.state.destinations }
+			fetch(createEndpoint, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(this.state.destinations)
 			})
-				.then((result) => {
-					console.log(result.data);
-					this.setState({
-						success:
-							"You're all set. Your shortlink is: " +
-							result.data.Success +
-							" (We've copied it to the clipboard for you.)",
-						destinations: ['', '']
-					});
+				.then((res) => res.text())
+				.then((res) => this.setState({ apiResponse: res, success: res }));
 
-					const copyText = document.createElement('textarea');
-					document.body.appendChild(copyText);
-					copyText.value = result.data.Success;
-					copyText.select();
-					document.execCommand('copy');
-					document.body.removeChild(copyText);
-				})
-				.catch((error) => this.setState({ error: error.message }));
+			// axios({
+			// 	method: 'post',
+			// 	url: `${API_PATH}`,
+			// 	headers: { 'content-type': 'application/json' },
+			// 	data: { destinations: this.state.destinations }
+			// })
+			// 	.then(result => {
+			// 		console.log(result.data);
+			// 		this.setState({
+			// 			success:
+			// 				"You're all set. Your shortlink is: " +
+			// 				result.data.Success +
+			// 				" (We've copied it to the clipboard for you.)",
+			// 			destinations: ['', '']
+			// 		});
+
+			// 		const copyText = document.createElement('textarea');
+			// 		document.body.appendChild(copyText);
+			// 		copyText.value = result.data.Success;
+			// 		copyText.select();
+			// 		document.execCommand('copy');
+			// 		document.body.removeChild(copyText);
+			// 	})
+			// 	.catch(error => this.setState({ error: error.message }));
 		}
 	};
 
@@ -95,55 +105,57 @@ class Main extends React.Component {
 		};
 
 		return (
-			<Container className="main-container">
-				<Row>
-					<Col>
-						<h1 className="main-title">ABCL.ink - Create A/B Testing Shortlinks</h1>
-					</Col>
-				</Row>
+			<Container className="wrapper">
+				<Container className="main-container">
+					<Row>
+						<Col>
+							<h1 className="main-title">ABCL.ink - Create A/B Testing Shortlinks</h1>
+						</Col>
+					</Row>
 
-				<Row>
-					<Col>
-						<FormGroup>
-							<Label for="destination">Destination URLs</Label>
-							{destinationFields()}
-						</FormGroup>
-					</Col>
-				</Row>
-				<Row>
-					<Col>
-						<FormGroup>
-							<Button onClick={this.addFields}>Add More Destinations</Button>
-						</FormGroup>
-					</Col>
-				</Row>
-				<Row>
-					<Col>
-						<ul>
-							<li>
-								Input as many landing page links as you have variants to split test.
-								Click the button to add additional destinations. (include https://
-								or http://)
-							</li>
-							<li>
-								The resulting link will forward the user to a random one of the URLs
-								you've provided.
-							</li>
-							<li>Click "COPY LINK" to copy the link to your clipboard.</li>
-						</ul>
-					</Col>
-				</Row>
-				<Row>
-					<Col>
-						{formErrorAlert()}
-						<Button color="primary" onClick={this.saveDestinations}>
-							Create Short Link
-						</Button>
-					</Col>
-				</Row>
-				<Row>
-					<Col>{shortLinkCreated()}</Col>
-				</Row>
+					<Row>
+						<Col>
+							<FormGroup>
+								<Label for="destination">Destination URLs</Label>
+								{destinationFields()}
+							</FormGroup>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<FormGroup>
+								<Button onClick={this.addFields}>Add More Destinations</Button>
+							</FormGroup>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<ul>
+								<li>
+									Input as many landing page links as you have variants to split
+									test. Click the button to add additional destinations. (include
+									https:// or http://)
+								</li>
+								<li>
+									The resulting link will forward the user to a random one of the
+									URLs you've provided.
+								</li>
+								<li>Click "COPY LINK" to copy the link to your clipboard.</li>
+							</ul>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							{formErrorAlert()}
+							<Button color="primary" size="lg" block onClick={this.saveDestinations}>
+								Create Short Link
+							</Button>
+						</Col>
+					</Row>
+					<Row>
+						<Col>{shortLinkCreated()}</Col>
+					</Row>
+				</Container>
 			</Container>
 		);
 	}
